@@ -25,11 +25,10 @@ export const QUALITIES = [
   { id: 'm9', sym: 'm9', group: 'Minor', tones: ['b3', '5', 'b7', '9'] },
   { id: 'm69', sym: 'm6/9', group: 'Minor', tones: ['b3', '5', '6', '9'] },
   { id: 'mmaj9', sym: 'm(maj9)', group: 'Minor', tones: ['b3', '5', '7', '9'] },
-  { id: 'dom9', sym: '9', group: 'Dominant', tones: ['3', '5', 'b7', '9'] },
+  { id: 'dom13b9', sym: '13♭9', group: 'Dominant', tones: ['3', '13', 'b7', 'b9'] },
   { id: 'dom13', sym: '13', group: 'Dominant', tones: ['3', '13', 'b7', '9'] },
   { id: 'alt', sym: '7alt', group: 'Dominant', tones: ['3', 'b13', 'b7', 's9'] },
   { id: 'hd', sym: 'ø(♭9)', group: 'Half-dim', tones: ['b3', 'b5', 'b7', 'b9'] },
-  { id: 'dim', sym: '°7(9)', group: 'Diminished', tones: ['b3', 'b5', 'bb7', '9'] },
 ] as const satisfies readonly Quality[];
 
 export const INVERSIONS = ['Root position', '1st inversion', '2nd inversion', '3rd inversion'] as const;

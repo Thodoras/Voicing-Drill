@@ -37,7 +37,7 @@ describe('practice preference adapter', () => {
 
   it('saves under the legacy-compatible key', () => {
     const storage = createStorage();
-    const preferences = { ...DEFAULT_PREFERENCES, q: ['dom9'] };
+    const preferences = { ...DEFAULT_PREFERENCES, q: ['dom13b9'] };
 
     savePreferences(preferences, storage);
 

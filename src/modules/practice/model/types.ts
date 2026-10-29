@@ -1,4 +1,4 @@
-export type ChordGroup = 'Major' | 'Minor' | 'Dominant' | 'Half-dim' | 'Diminished';
+export type ChordGroup = 'Major' | 'Minor' | 'Dominant' | 'Half-dim';
 export type Hand = 0 | 1;
 
 export interface Quality {

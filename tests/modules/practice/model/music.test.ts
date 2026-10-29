@@ -29,6 +29,16 @@ describe('practice model', () => {
     expect(prompt.midi).toEqual([68, 72, 73, 77]);
   });
 
+  it('creates a dominant 13 flat 9 with the requested chord tones', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['dom13b9'], inv: [0], hand: [0] });
+
+    expect(prompt.q.sym).toBe('13♭9');
+    expect(prompt.q.tones).toEqual(['3', '13', 'b7', 'b9']);
+    expect(prompt.midi).toEqual([52, 57, 58, 61]);
+  });
+
   it('generates four ascending notes for every supported quality', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
 
