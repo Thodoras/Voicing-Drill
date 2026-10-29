@@ -1,0 +1,78 @@
+:root {
+  font-family: "IBM Plex Sans", "Avenir Next", system-ui, sans-serif;
+  color: #141b2b;
+  background: #e7eaef;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #e7eaef;
+  --surface: #f6f7f9;
+  --ink: #141b2b;
+  --muted: #596578;
+  --line: #cbd1db;
+  --card: #121826;
+  --card-ink: #f3eedf;
+  --card-muted: #a4adbd;
+  --brass: #c69036;
+  --brass-ink: #1a1408;
+  --key-white: #fbfbf8;
+  --key-black: #1b2130;
+  --ambient-background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.72), transparent 70%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    color: #e8eaf0;
+    background: #0b0f17;
+    --bg: #0b0f17;
+    --surface: #141a26;
+    --ink: #e8eaf0;
+    --muted: #9aa3b5;
+    --line: #263043;
+    --card: #1a2234;
+    --card-ink: #f3eedf;
+    --card-muted: #a4adbd;
+    --brass: #d9a548;
+    --key-white: #dcdfe6;
+    --key-black: #0b0f17;
+    --ambient-background: radial-gradient(ellipse at 50% 0%, rgba(52,64,84,.58), transparent 70%);
+  }
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; }
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--ambient-background);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; }
+button:focus-visible { outline: 3px solid var(--brass); outline-offset: 3px; }
+.app-shell {
+  width: min(100%, 720px);
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (min-width: 700px) {
+  .app-shell { gap: 16px; padding-top: max(22px, env(safe-area-inset-top)); padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 420px) {
+  .app-shell { gap: 11px; padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+}
+@media (max-height: 700px) and (max-width: 600px) {
+  .app-shell { gap: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

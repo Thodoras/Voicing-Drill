@@ -1,0 +1,408 @@
+<title>Voicing Drill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Voicings">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one-screen practice app. Header, one big lacquered "card" that is the button, answer drawer below. */
+:root {
+  --bg: #E7EAEF;
+  --surface: #F6F7F9;
+  --ink: #141B2B;
+  --muted: #5A6578;
+  --line: #CBD1DB;
+  --card: #121826;
+  --card-ink: #F3EEDF;
+  --card-muted: #9AA3B5;
+  --brass: #C69036;
+  --brass-ink: #1A1408;
+  --key-white: #FBFBF8;
+  --key-black: #1B2130;
+  --key-hit: #C69036;
+  --font-display: "Bricolage Grotesque", "Avenir Next Condensed", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B0F17; --surface: #141A26; --ink: #E8EAF0; --muted: #8E97A8; --line: #263043;
+    --card: #1A2234; --card-ink: #F3EEDF; --card-muted: #8E98AD;
+    --brass: #D9A548; --brass-ink: #1A1408;
+    --key-white: #DCDFE6; --key-black: #0B0F17; --key-hit: #D9A548;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B0F17; --surface: #141A26; --ink: #E8EAF0; --muted: #8E97A8; --line: #263043;
+  --card: #1A2234; --card-ink: #F3EEDF; --card-muted: #8E98AD;
+  --brass: #D9A548; --brass-ink: #1A1408;
+  --key-white: #DCDFE6; --key-black: #0B0F17; --key-hit: #D9A548;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+}
+.app {
+  height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 14px;
+  max-width: 560px; margin: 0 auto;
+  padding-block: 12px 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+header h1 { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+header .count { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.icon-btn {
+  font: 500 14px var(--font-body); color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 14px; cursor: pointer;
+}
+.icon-btn:focus-visible, .card:focus-visible, .chip:focus-visible, .ghost:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+
+.card {
+  flex: 1 1 auto; min-height: 260px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  background: var(--card); color: var(--card-ink);
+  border: 0; border-radius: 22px; cursor: pointer;
+  font: inherit; text-align: center; padding: 24px 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 30px -18px rgba(0,0,0,0.6);
+  transition: transform 90ms ease;
+  user-select: none; -webkit-user-select: none; touch-action: manipulation;
+}
+.card:active { transform: scale(0.985); }
+.chord {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(64px, 22vw, 120px); line-height: 0.95; letter-spacing: -0.03em;
+  display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap;
+}
+.chord .q { font-weight: 500; font-size: 0.55em; letter-spacing: -0.01em; margin-left: 0.04em; }
+.chord .acc { font-size: 0.8em; margin-left: 0.01em; }
+.meta { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.inv { font-size: clamp(20px, 6vw, 26px); font-weight: 500; }
+.hand {
+  font: 600 13px var(--font-body); text-transform: uppercase; letter-spacing: 0.12em;
+  background: var(--brass); color: var(--brass-ink);
+  border-radius: 999px; padding: 7px 14px;
+}
+.hint { font-size: 13px; color: var(--card-muted); }
+.pop { animation: pop 220ms ease-out; }
+@keyframes pop { from { opacity: 0.2; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; } .card { transition: none; } }
+
+.answer { display: flex; flex-direction: column; gap: 10px; }
+.answer-bar { display: flex; gap: 8px; }
+.ghost {
+  flex: 1; font: 500 15px var(--font-body); color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 13px 10px; cursor: pointer;
+}
+.reveal { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.notes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+.note b { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+.note span { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.notes-cap { font-size: 12px; color: var(--muted); text-align: center; }
+.piano { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px; }
+svg.kb { width: 100%; height: auto; display: block; }
+.kb .w { fill: var(--key-white); stroke: var(--line); }
+.kb .b { fill: var(--key-black); }
+.kb .hit { fill: var(--key-hit); }
+.kb .lbl { font: 600 9px var(--font-body); fill: var(--muted); }
+.kb .hit-lbl { font: 600 9px var(--font-body); fill: var(--brass-ink); }
+
+dialog {
+  border: 1px solid var(--line); border-radius: 20px; padding: 0;
+  background: var(--surface); color: var(--ink);
+  width: min(520px, calc(100vw - 32px)); max-height: calc(100% - 48px);
+}
+dialog::backdrop { background: rgba(5, 8, 14, 0.5); }
+.sheet { padding: 18px; display: flex; flex-direction: column; gap: 18px; }
+.sheet h2 { font-family: var(--font-display); font-size: 20px; margin: 0; }
+.group { display: flex; flex-direction: column; gap: 8px; }
+.group h3 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: 500 14px var(--font-body); color: var(--ink);
+  background: transparent; border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 12px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip small { color: inherit; opacity: 0.65; font-size: 12px; margin-left: 4px; }
+.sheet-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.sheet-foot p { margin: 0; font-size: 12px; color: var(--muted); }
+.done { font: 600 15px var(--font-body); background: var(--brass); color: var(--brass-ink); border: 0; border-radius: 12px; padding: 11px 20px; cursor: pointer; }
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1>Voicing Drill</h1>
+      <div class="count" id="count">4-note rootless voicings</div>
+    </div>
+    <button class="icon-btn" id="openSettings" type="button">Settings</button>
+  </header>
+
+  <button class="card" id="card" type="button" aria-live="polite">
+    <div class="chord" id="chord">D<span class="acc">♭</span><span class="q">m9</span></div>
+    <div class="meta">
+      <div class="inv" id="inv">2nd inversion</div>
+      <div class="hand" id="hand">Left hand</div>
+    </div>
+    <div class="hint" id="hint">Tap for the next chord</div>
+  </button>
+
+  <div class="piano" id="piano">
+    <svg class="kb" id="kb" viewBox="0 0 280 90" role="img" aria-label="Keyboard showing the voicing"></svg>
+  </div>
+
+  <div class="answer">
+    <div class="answer-bar">
+      <button class="ghost" id="toggleReveal" type="button" aria-expanded="false">Show notes</button>
+      <button class="ghost" id="play" type="button">Play</button>
+    </div>
+    <div class="reveal" id="reveal" hidden>
+      <div class="notes" id="notes"></div>
+      <div class="notes-cap">Bottom to top</div>
+    </div>
+  </div>
+</div>
+
+<dialog id="settings">
+  <form class="sheet" method="dialog">
+    <h2>What to practise</h2>
+    <div class="group"><h3>Chord types</h3><div class="chips" id="qualityChips"></div></div>
+    <div class="group"><h3>Inversions</h3><div class="chips" id="invChips"></div></div>
+    <div class="group"><h3>Hand</h3><div class="chips" id="handChips"></div></div>
+    <div class="group"><h3>Display</h3><div class="chips"><button class="chip" id="kbToggle" type="button" aria-pressed="true">Show keyboard</button></div></div>
+    <div class="sheet-foot">
+      <p>Keep at least one option on in each group.</p>
+      <button class="done" type="submit">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+// ---------- Music theory ----------
+const LETTERS = ['C','D','E','F','G','A','B'];
+const LETTER_PC = [0,2,4,5,7,9,11];
+// Root names for the black keys, following lead-sheet habit for each chord family.
+const FLAT = [[1,-1],[2,-1],[4,-1],[5,-1],[6,-1]], SHARP = [[0,1],[1,1],[3,1],[4,1],[5,1]];
+const BLACK = [1,3,6,8,10];
+const ROOT_NAMES = {
+  Major:    [FLAT[0], FLAT[1], FLAT[2], FLAT[3], FLAT[4]],    // D♭ E♭ G♭ A♭ B♭
+  Dominant: [FLAT[0], FLAT[1], SHARP[2], FLAT[3], FLAT[4]],   // D♭ E♭ F♯ A♭ B♭
+  Minor:    [SHARP[0], FLAT[1], SHARP[2], SHARP[3], FLAT[4]], // C♯ E♭ F♯ G♯ B♭
+};
+const WHITE = { 0:[0,0], 2:[1,0], 4:[2,0], 5:[3,0], 7:[4,0], 9:[5,0], 11:[6,0] };
+
+// Tone = [scale degree, semitones above root, label]
+const T = {
+  b3:[3,3,'♭3'], 3:[3,4,'3'], b5:[5,6,'♭5'], 5:[5,7,'5'], 6:[6,9,'6'], 13:[6,9,'13'], b13:[6,8,'♭13'],
+  bb7:[7,9,'𝄫7'], b7:[7,10,'♭7'], 7:[7,11,'7'], b9:[2,13,'♭9'], 9:[2,14,'9'], s9:[3,15,'♯9'],
+};
+// Root-position voicing, listed bottom to top.
+const QUALITIES = [
+  { id:'maj9',  sym:'maj9',    group:'Major',      tones:['3','5','7','9'] },
+  { id:'69',    sym:'6/9',     group:'Major',      tones:['3','5','6','9'] },
+  { id:'m9',    sym:'m9',      group:'Minor',      tones:['b3','5','b7','9'] },
+  { id:'m69',   sym:'m6/9',    group:'Minor',      tones:['b3','5','6','9'] },
+  { id:'mmaj9', sym:'m(maj9)', group:'Minor',      tones:['b3','5','7','9'] },
+  { id:'dom9',  sym:'9',       group:'Dominant',   tones:['3','5','b7','9'] },
+  { id:'dom13', sym:'13',      group:'Dominant',   tones:['3','13','b7','9'] },
+  { id:'alt',   sym:'7alt',    group:'Dominant',   tones:['3','b13','b7','s9'] },
+  { id:'hd',    sym:'ø(♭9)',   group:'Half-dim',   tones:['b3','b5','b7','b9'] },
+  { id:'dim',   sym:'°7(9)',   group:'Diminished', tones:['b3','b5','bb7','9'] },
+];
+const INVERSIONS = ['Root position','1st inversion','2nd inversion','3rd inversion'];
+const HANDS = ['Left hand','Right hand'];
+const ACC = { '-2':'𝄫', '-1':'♭', '0':'', '1':'♯', '2':'𝄪' };
+
+function spell(letterIdx, rootAcc, tone) {
+  const [deg, semi] = tone;
+  const li = (letterIdx + deg - 1) % 7;
+  const rootPc = (LETTER_PC[letterIdx] + rootAcc + 12) % 12;
+  let acc = ((rootPc + semi - LETTER_PC[li]) % 12 + 12) % 12;
+  if (acc > 6) acc -= 12;
+  if (Math.abs(acc) === 2) { // simplify double sharps/flats to the plain enharmonic note
+    const pc = (LETTER_PC[li] + acc + 12) % 12;
+    const k = LETTER_PC.indexOf(pc);
+    return k >= 0 ? { letter: LETTERS[k], acc: 0 } : { letter: LETTERS[li], acc: acc / 2 };
+  }
+  return { letter: LETTERS[li], acc };
+}
+function bestRoot(pc, q) {
+  const fam = q.group === 'Major' || q.group === 'Dominant' ? q.group : 'Minor';
+  const [li, acc] = pc in WHITE ? WHITE[pc] : ROOT_NAMES[fam][BLACK.indexOf(pc)];
+  return { li, acc, notes: q.tones.map(t => spell(li, acc, T[t])) };
+}
+// MIDI pitches for the voicing, stacked closely upward from the chosen bottom tone.
+function stack(rootPc, semis, hand) {
+  const lo = hand === 0 ? 50 : 60; // LH bottom note from D3, RH from C4
+  let p = lo + (((rootPc + semis[0]) - lo) % 12 + 12) % 12;
+  const out = [p];
+  for (let i = 1; i < semis.length; i++) {
+    let n = p - ((p - (rootPc + semis[i])) % 12 + 12) % 12;
+    while (n <= p) n += 12;
+    out.push(p = n);
+  }
+  return out;
+}
+
+// ---------- State ----------
+const KEY = 'voicing-drill-v1';
+let prefs = { q: QUALITIES.map(q => q.id), inv: [0,1,2,3], hand: [0,1], kb: true };
+try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.q?.length && s.inv?.length && s.hand?.length) prefs = { ...prefs, ...s }; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} };
+
+let current = null, count = 0;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+function generate() {
+  const qs = QUALITIES.filter(q => prefs.q.includes(q.id));
+  let c, tries = 0;
+  do {
+    const q = pick(qs), rootPc = Math.floor(Math.random() * 12), inv = pick(prefs.inv), hand = pick(prefs.hand);
+    c = { q, rootPc, inv, hand };
+    tries++;
+  } while (current && tries < 20 && c.rootPc === current.rootPc && c.q.id === current.q.id);
+  const r = bestRoot(c.rootPc, c.q);
+  const order = c.q.tones.map((t, i) => c.q.tones[(i + c.inv) % 4]);
+  c.root = { letter: LETTERS[r.li], acc: r.acc };
+  c.notes = order.map(t => ({ ...spell(r.li, r.acc, T[t]), label: T[t][2] }));
+  c.midi = stack(c.rootPc, order.map(t => T[t][1] % 12), c.hand);
+  return c;
+}
+
+// ---------- Rendering ----------
+const $ = id => document.getElementById(id);
+const noteHtml = n => n.letter + (n.acc ? `<span class="acc">${ACC[n.acc]}</span>` : '');
+
+function render(animate) {
+  const c = current;
+  $('chord').innerHTML = noteHtml(c.root) + `<span class="q">${c.q.sym}</span>`;
+  $('inv').textContent = INVERSIONS[c.inv];
+  $('hand').textContent = HANDS[c.hand];
+  $('count').textContent = count ? `Chord ${count}` : '4-note rootless voicings';
+  $('notes').innerHTML = c.notes.map(n => `<div class="note"><b>${n.letter}${ACC[n.acc]}</b><span>${n.label}</span></div>`).join('');
+  drawKeyboard(c.midi);
+  $('piano').hidden = !prefs.kb;
+  if (animate) {
+    const el = $('card');
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  }
+}
+
+function drawKeyboard(midi) {
+  const start = Math.floor(midi[0] / 12) * 12; // C below the bottom note, two octaves
+  const W = 20, H = 90, BW = 12, BH = 54;
+  const blackPcs = [1,3,6,8,10];
+  let whites = '', blacks = '', x = 0;
+  const xs = {};
+  for (let m = start; m < start + 24; m++) {
+    const pc = m % 12;
+    if (!blackPcs.includes(pc)) {
+      whites += `<rect class="w${midi.includes(m) ? ' hit' : ''}" x="${x * W + 0.5}" y="0.5" width="${W - 1}" height="${H - 1}" rx="2"/>`;
+      if (pc === 0 && !midi.includes(m)) whites += `<text class="lbl" x="${x * W + W / 2}" y="${H - 6}" text-anchor="middle">C${m / 12 - 1}</text>`;
+      xs[m] = x++;
+    } else {
+      blacks += `<rect class="b${midi.includes(m) ? ' hit' : ''}" x="${x * W - BW / 2}" y="0" width="${BW}" height="${BH}" rx="1.5"/>`;
+    }
+  }
+  $('kb').setAttribute('viewBox', `0 0 ${x * W} ${H}`);
+  $('kb').innerHTML = whites + blacks;
+}
+
+function next() {
+  current = generate();
+  count++;
+  setReveal(false);
+  render(true);
+}
+
+function setReveal(open) {
+  $('reveal').hidden = !open;
+  $('toggleReveal').textContent = open ? 'Hide notes' : 'Show notes';
+  $('toggleReveal').setAttribute('aria-expanded', String(open));
+}
+
+// ---------- Sound ----------
+let ctx;
+function play() {
+  try {
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    const t0 = ctx.currentTime;
+    current.midi.forEach((m, i) => {
+      const t = t0 + i * 0.04;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = 440 * Math.pow(2, (m - 69) / 12);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.16, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0008, t + 2.2);
+      o.connect(g).connect(ctx.destination);
+      o.start(t); o.stop(t + 2.3);
+    });
+  } catch (e) {}
+}
+
+// ---------- Settings ----------
+function chips(el, items, key) {
+  el.innerHTML = '';
+  items.forEach(({ value, label, note }) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.id = `chip-${key}-${value}`;
+    b.innerHTML = label + (note ? `<small>${note}</small>` : '');
+    b.setAttribute('aria-pressed', String(prefs[key].includes(value)));
+    b.addEventListener('click', () => {
+      const on = prefs[key].includes(value);
+      if (on && prefs[key].length === 1) return; // keep at least one
+      prefs[key] = on ? prefs[key].filter(v => v !== value) : [...prefs[key], value];
+      b.setAttribute('aria-pressed', String(!on));
+      save();
+    });
+    el.appendChild(b);
+  });
+}
+chips($('qualityChips'), QUALITIES.map(q => ({ value: q.id, label: 'C' + q.sym, note: q.tones.map(t => T[t][2]).join(' ') })), 'q');
+chips($('invChips'), INVERSIONS.map((l, i) => ({ value: i, label: l })), 'inv');
+chips($('handChips'), HANDS.map((l, i) => ({ value: i, label: l })), 'hand');
+
+$('kbToggle').setAttribute('aria-pressed', String(prefs.kb));
+$('kbToggle').addEventListener('click', () => {
+  prefs.kb = !prefs.kb;
+  $('kbToggle').setAttribute('aria-pressed', String(prefs.kb));
+  $('piano').hidden = !prefs.kb;
+  save();
+});
+$('openSettings').addEventListener('click', () => $('settings').showModal());
+$('settings').addEventListener('close', () => {
+  if (!prefs.q.includes(current.q.id) || !prefs.inv.includes(current.inv) || !prefs.hand.includes(current.hand)) next();
+});
+$('card').addEventListener('click', next);
+$('toggleReveal').addEventListener('click', () => setReveal($('reveal').hidden));
+$('play').addEventListener('click', play);
+document.addEventListener('keydown', e => {
+  if ($('settings').open) return;
+  if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); next(); }
+  else if (e.key === 'n') setReveal($('reveal').hidden);
+  else if (e.key === 'p') play();
+});
+
+// Opening example: E♭m9, 2nd inversion, left hand.
+(function () {
+  const q = QUALITIES.find(q => q.id === 'm9');
+  current = { q, rootPc: 3, inv: 2, hand: 0 };
+  const r = bestRoot(3, q);
+  const order = q.tones.map((t, i) => q.tones[(i + 2) % 4]);
+  current.root = { letter: LETTERS[r.li], acc: r.acc };
+  current.notes = order.map(t => ({ ...spell(r.li, r.acc, T[t]), label: T[t][2] }));
+  current.midi = stack(3, order.map(t => T[t][1] % 12), 0);
+  render(false);
+})();
+</script>

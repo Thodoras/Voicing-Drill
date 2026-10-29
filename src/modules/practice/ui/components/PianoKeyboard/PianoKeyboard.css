@@ -1,0 +1,5 @@
+.keyboard-svg { display: block; width: 100%; height: auto; }
+.key-white { fill: var(--key-white); stroke: var(--line); stroke-width: 1; }
+.key-black { fill: var(--key-black); }
+.key-hit { fill: var(--brass); }
+.key-label { fill: var(--muted); font: 600 9px "IBM Plex Sans", sans-serif; }

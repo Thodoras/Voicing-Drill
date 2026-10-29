@@ -1,0 +1,23 @@
+.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.secondary-action, .primary-action {
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+.secondary-action { background: var(--surface); color: var(--ink); }
+.primary-action { border-color: var(--brass); background: var(--brass); color: var(--brass-ink); }
+.action-icon { width: 20px; font-size: 20px; line-height: 1; text-align: center; }
+.play-icon { font-size: 13px; }
+@media (max-width: 420px) {
+  .action-row { gap: 8px; }
+  .secondary-action, .primary-action { min-height: 52px; font-size: 14px; }
+}

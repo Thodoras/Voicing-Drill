@@ -1,0 +1,16 @@
+.settings-dialog { width: min(560px, calc(100vw - 24px)); max-width: none; max-height: min(88svh, 760px); overflow: auto; border: 1px solid var(--line); border-radius: 20px; padding: 0; background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px rgba(0,0,0,.25); }
+.settings-dialog::backdrop { background: rgba(5, 8, 14, .58); backdrop-filter: blur(3px); }
+.settings-sheet { display: flex; flex-direction: column; gap: 20px; padding: 20px; }
+.settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.settings-heading h2 { margin: 2px 0 0; font: 700 24px/1.1 "Bricolage Grotesque", sans-serif; }
+.eyebrow { margin: 0; color: var(--muted); font: 500 10px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
+.close-button { width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); cursor: pointer; font-size: 25px; line-height: 1; }
+.option-group { min-width: 0; margin: 0; border: 0; padding: 0; }
+.option-group legend { margin-bottom: 9px; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 42px; border: 1px solid var(--line); border-radius: 12px; padding: 7px 11px; background: transparent; color: var(--ink); cursor: pointer; font-size: 13px; font-weight: 500; }
+.chip[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.chip small { display: block; margin-top: 3px; opacity: .7; font: 500 10px/1.1 "IBM Plex Mono", monospace; }
+.settings-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+.settings-footer p { max-width: 230px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.done-button { min-height: 46px; border: 0; border-radius: 12px; padding: 0 21px; background: var(--brass); color: var(--brass-ink); cursor: pointer; font-weight: 600; }

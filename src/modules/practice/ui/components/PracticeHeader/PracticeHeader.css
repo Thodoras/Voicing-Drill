@@ -1,0 +1,30 @@
+.app-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.brand-lockup { display: flex; align-items: center; gap: 11px; }
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--brass);
+  font: 700 24px/1 "Bricolage Grotesque", sans-serif;
+}
+.app-header h1 { margin: 0; font: 700 20px/1.1 "Bricolage Grotesque", sans-serif; }
+.count-label { margin: 3px 0 0; color: var(--muted); font: 500 11px/1.3 "IBM Plex Mono", monospace; }
+.settings-button {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 14px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 600;
+}
+.settings-glyph { font-size: 19px; line-height: 1; }

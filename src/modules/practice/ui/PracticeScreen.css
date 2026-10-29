@@ -1,0 +1,11 @@
+.keyboard-panel {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 10px;
+  background: var(--surface);
+}
+.answer-area { display: flex; flex-direction: column; gap: 10px; }
+
+@media (min-width: 700px) {
+  .keyboard-panel { padding: 13px 16px; }
+}
