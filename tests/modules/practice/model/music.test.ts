@@ -29,6 +29,32 @@ describe('practice model', () => {
     expect(prompt.midi).toEqual([68, 72, 73, 77]);
   });
 
+  it('prefers A-flat over G-sharp for a minor chord root', () => {
+    vi.spyOn(Math, 'random')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0.7)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0);
+
+    const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['m9'], inv: [0], hand: [0] });
+
+    expect(prompt.root).toEqual({ letter: 'A', acc: -1 });
+  });
+
+  it('labels minor major-seventh ninth chords as A-flat minor ninth major seventh', () => {
+    vi.spyOn(Math, 'random')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(8 / 12)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0);
+
+    const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['mmaj9'], inv: [0], hand: [0] });
+
+    expect(prompt.root).toEqual({ letter: 'A', acc: -1 });
+    expect(prompt.q.sym).toBe('m9(maj7)');
+    expect(`${prompt.root.letter}♭${prompt.q.sym}`).toBe('A♭m9(maj7)');
+  });
+
   it('creates a dominant 13 flat 9 with the requested chord tones', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
 

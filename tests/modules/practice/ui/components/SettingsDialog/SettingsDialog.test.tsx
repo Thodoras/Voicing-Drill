@@ -19,7 +19,7 @@ describe('SettingsDialog', () => {
 
     const dialog = within(screen.getByRole('dialog'));
     expect(dialog.getByRole('heading', { name: 'What to practise' })).toBeInTheDocument();
-    await user.click(dialog.getByRole('button', { name: /Cm9/ }));
+    await user.click(dialog.getByRole('button', { name: 'Cm9 ♭3 5 ♭7 9' }));
     expect(onPreferencesChange).toHaveBeenCalledWith({
       ...preferences,
       q: preferences.q.filter((quality) => quality !== 'm9'),

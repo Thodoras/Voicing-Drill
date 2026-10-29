@@ -8,7 +8,7 @@ type RootFamily = 'Major' | 'Dominant' | 'Minor';
 const ROOT_NAMES: Record<RootFamily, readonly (readonly [number, number])[]> = {
   Major: [FLAT[0], FLAT[1], FLAT[2], FLAT[3], FLAT[4]],
   Dominant: [FLAT[0], FLAT[1], SHARP[2], FLAT[3], FLAT[4]],
-  Minor: [SHARP[0], FLAT[1], SHARP[2], SHARP[3], FLAT[4]],
+  Minor: [SHARP[0], FLAT[1], SHARP[2], FLAT[3], FLAT[4]],
 };
 const WHITE: Record<number, readonly [number, number]> = {
   0: [0, 0], 2: [1, 0], 4: [2, 0], 5: [3, 0], 7: [4, 0], 9: [5, 0], 11: [6, 0],
@@ -24,7 +24,7 @@ export const QUALITIES = [
   { id: '69', sym: '6/9', group: 'Major', tones: ['3', '5', '6', '9'] },
   { id: 'm9', sym: 'm9', group: 'Minor', tones: ['b3', '5', 'b7', '9'] },
   { id: 'm69', sym: 'm6/9', group: 'Minor', tones: ['b3', '5', '6', '9'] },
-  { id: 'mmaj9', sym: 'm(maj9)', group: 'Minor', tones: ['b3', '5', '7', '9'] },
+  { id: 'mmaj9', sym: 'm9(maj7)', group: 'Minor', tones: ['b3', '5', '7', '9'] },
   { id: 'dom13b9', sym: '13♭9', group: 'Dominant', tones: ['3', '13', 'b7', 'b9'] },
   { id: 'dom13', sym: '13', group: 'Dominant', tones: ['3', '13', 'b7', '9'] },
   { id: 'alt', sym: '7alt', group: 'Dominant', tones: ['3', 'b13', 'b7', 's9'] },
