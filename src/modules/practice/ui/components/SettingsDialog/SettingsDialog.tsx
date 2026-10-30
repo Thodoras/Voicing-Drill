@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { HANDS, INVERSIONS, QUALITIES } from '../../../model/music';
 import type { Hand, Preferences } from '../../../model/types';
+import ProgressionSettings from '../ProgressionSettings/ProgressionSettings';
 import './SettingsDialog.css';
 
 interface SettingsDialogProps {
@@ -42,57 +43,63 @@ export default function SettingsDialog({ open, preferences, onPreferencesChange,
           <button className="close-button" type="submit" aria-label="Close settings">×</button>
         </div>
 
-        <fieldset className="option-group">
-          <legend>Chord types</legend>
-          <div className="chips">
-            {QUALITIES.map((quality) => (
-              <button
-                className="chip"
-                type="button"
-                key={quality.id}
-                aria-pressed={preferences.q.includes(quality.id)}
-                onClick={() => onPreferencesChange({ ...preferences, q: toggleChoice(preferences.q, quality.id) })}
-              >
-                <span>C{quality.sym}</span>
-                <small>{quality.tones.map(displayTone).join(' ')}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
+        {preferences.mode === 'single' ? (
+          <>
+            <fieldset className="option-group">
+              <legend>Chord types</legend>
+              <div className="chips">
+                {QUALITIES.map((quality) => (
+                  <button
+                    className="chip"
+                    type="button"
+                    key={quality.id}
+                    aria-pressed={preferences.q.includes(quality.id)}
+                    onClick={() => onPreferencesChange({ ...preferences, q: toggleChoice(preferences.q, quality.id) })}
+                  >
+                    <span>C{quality.sym}</span>
+                    <small>{quality.tones.map(displayTone).join(' ')}</small>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
 
-        <fieldset className="option-group">
-          <legend>Inversions</legend>
-          <div className="chips">
-            {INVERSIONS.map((inversion, index) => (
-              <button
-                className="chip"
-                type="button"
-                key={inversion}
-                aria-pressed={preferences.inv.includes(index)}
-                onClick={() => onPreferencesChange({ ...preferences, inv: toggleChoice(preferences.inv, index) })}
-              >
-                {inversion}
-              </button>
-            ))}
-          </div>
-        </fieldset>
+            <fieldset className="option-group">
+              <legend>Inversions</legend>
+              <div className="chips">
+                {INVERSIONS.map((inversion, index) => (
+                  <button
+                    className="chip"
+                    type="button"
+                    key={inversion}
+                    aria-pressed={preferences.inv.includes(index)}
+                    onClick={() => onPreferencesChange({ ...preferences, inv: toggleChoice(preferences.inv, index) })}
+                  >
+                    {inversion}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
 
-        <fieldset className="option-group">
-          <legend>Hand</legend>
-          <div className="chips">
-            {HANDS.map((hand, index) => (
-              <button
-                className="chip"
-                type="button"
-                key={hand}
-                aria-pressed={preferences.hand.includes(index as Hand)}
-                onClick={() => onPreferencesChange({ ...preferences, hand: toggleChoice(preferences.hand, index as Hand) })}
-              >
-                {hand}
-              </button>
-            ))}
-          </div>
-        </fieldset>
+            <fieldset className="option-group">
+              <legend>Hand</legend>
+              <div className="chips">
+                {HANDS.map((hand, index) => (
+                  <button
+                    className="chip"
+                    type="button"
+                    key={hand}
+                    aria-pressed={preferences.hand.includes(index as Hand)}
+                    onClick={() => onPreferencesChange({ ...preferences, hand: toggleChoice(preferences.hand, index as Hand) })}
+                  >
+                    {hand}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          </>
+        ) : (
+          <ProgressionSettings preferences={preferences} onChange={onPreferencesChange} />
+        )}
 
         <div className="settings-footer">
           <p>At least one option stays selected in each group.</p>

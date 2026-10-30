@@ -1,10 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPrompt } from '../model/music';
-import type { Preferences, Prompt } from '../model/types';
+import { createProgression } from '../model/progression';
+import type { Preferences, PracticeMode, Prompt } from '../model/types';
 import { loadPreferences, savePreferences } from '../api/preferencesStorage';
 
-function playMidi(contextRef: { current: AudioContext | null }, midiNotes: number[]): void {
+function playMidi(
+  contextRef: { current: AudioContext | null },
+  activeNodes: { current: AudioScheduledSourceNode[] },
+  midiNotes: number[],
+): void {
   try {
+    activeNodes.current.forEach((node) => {
+      try {
+        node.stop();
+      } catch {
+        // The note may have already ended.
+      }
+    });
+    activeNodes.current = [];
     const browserWindow = window as Window & { webkitAudioContext?: typeof AudioContext };
     const AudioContextConstructor = window.AudioContext || browserWindow.webkitAudioContext;
     if (!AudioContextConstructor) return;
@@ -25,6 +38,7 @@ function playMidi(contextRef: { current: AudioContext | null }, midiNotes: numbe
       oscillator.connect(gain).connect(context.destination);
       oscillator.start(time);
       oscillator.stop(time + 2.3);
+      activeNodes.current.push(oscillator);
     });
   } catch {
     // Audio may be unavailable or blocked by the browser.
@@ -36,16 +50,42 @@ export function usePractice() {
   const [prompt, setPrompt] = useState<Prompt>(() => createPrompt(preferences));
   const [count, setCount] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [activeProgressionIndex, setActiveProgressionIndex] = useState(0);
   const audioContext = useRef<AudioContext | null>(null);
+  const activeAudioNodes = useRef<AudioScheduledSourceNode[]>([]);
+  const progressionTimer = useRef<number | null>(null);
 
   useEffect(() => savePreferences(preferences), [preferences]);
 
+  function stopAudio() {
+    activeAudioNodes.current.forEach((node) => {
+      try {
+        node.stop();
+      } catch {
+        // The note may have already ended.
+      }
+    });
+    activeAudioNodes.current = [];
+  }
+
+  function stopProgression() {
+    if (progressionTimer.current !== null) {
+      window.clearTimeout(progressionTimer.current);
+      progressionTimer.current = null;
+    }
+    stopAudio();
+    setIsPlaying(false);
+  }
+
   function nextPrompt() {
+    stopProgression();
     setPrompt((previous) => createPrompt(preferences, previous));
     setCount((previous) => previous + 1);
   }
 
   function closeSettings() {
+    stopProgression();
     setSettingsOpen(false);
     if (
       !preferences.q.includes(prompt.q.id)
@@ -58,8 +98,53 @@ export function usePractice() {
   }
 
   function playVoicing() {
-    playMidi(audioContext, prompt.midi);
+    playMidi(audioContext, activeAudioNodes, prompt.midi);
   }
+
+  function playProgression() {
+    stopProgression();
+    const progression = createProgression(preferences.progression);
+    const chordDuration = (60_000 / preferences.progression.tempo) * 4;
+    setIsPlaying(true);
+
+    function playStep(index: number) {
+      setActiveProgressionIndex(index);
+      playMidi(audioContext, activeAudioNodes, progression[index].prompt.midi);
+      progressionTimer.current = window.setTimeout(() => {
+        if (index === progression.length - 1) {
+          progressionTimer.current = null;
+          setIsPlaying(false);
+        } else {
+          playStep(index + 1);
+        }
+      }, chordDuration);
+    }
+
+    playStep(0);
+  }
+
+  function playProgressionChord(index: number) {
+    stopProgression();
+    const chord = createProgression(preferences.progression)[index];
+    if (!chord) return;
+    setActiveProgressionIndex(index);
+    playMidi(audioContext, activeAudioNodes, chord.prompt.midi);
+  }
+
+  function openSettings() {
+    stopProgression();
+    setSettingsOpen(true);
+  }
+
+  function changeMode(mode: PracticeMode) {
+    stopProgression();
+    setPreferences((current) => ({ ...current, mode }));
+  }
+
+  useEffect(() => () => {
+    if (progressionTimer.current !== null) window.clearTimeout(progressionTimer.current);
+    stopAudio();
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -71,28 +156,41 @@ export function usePractice() {
 
       if ((event.code === 'Space' || event.code === 'Enter') && !(target instanceof HTMLButtonElement)) {
         event.preventDefault();
-        nextPrompt();
+        if (preferences.mode === 'single') nextPrompt();
+        else if (isPlaying) stopProgression();
+        else playProgression();
       } else if (event.key.toLowerCase() === 'k') {
         setPreferences((previous) => ({ ...previous, kb: !previous.kb }));
       } else if (event.key.toLowerCase() === 'p') {
-        playMidi(audioContext, prompt.midi);
+        if (preferences.mode === 'single') playMidi(audioContext, activeAudioNodes, prompt.midi);
+        else if (isPlaying) stopProgression();
+        else playProgression();
       }
     }
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [preferences, prompt, settingsOpen]);
+  }, [preferences, prompt, settingsOpen, isPlaying]);
+
+  const progression = createProgression(preferences.progression);
 
   return {
     count,
     prompt,
+    progression,
     preferences,
+    isPlaying,
+    activeProgressionIndex,
     settingsOpen,
     setPreferences,
     nextPrompt,
     toggleKeyboard: () => setPreferences((previous) => ({ ...previous, kb: !previous.kb })),
-    openSettings: () => setSettingsOpen(true),
+    changeMode,
+    openSettings,
     closeSettings,
     playVoicing,
+    playProgression,
+    playProgressionChord,
+    stopProgression,
   };
 }

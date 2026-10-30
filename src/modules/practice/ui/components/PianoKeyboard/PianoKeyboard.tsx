@@ -3,12 +3,14 @@ import './PianoKeyboard.css';
 
 interface PianoKeyboardProps {
   midi: number[];
+  rangeMidi?: number[];
 }
 
 const BLACK_PITCHES = new Set([1, 3, 6, 8, 10]);
+const KEYBOARD_OCTAVES = 2;
 
-export default function PianoKeyboard({ midi }: PianoKeyboardProps) {
-  const start = Math.floor(midi[0] / 12) * 12;
+export default function PianoKeyboard({ midi, rangeMidi = midi }: PianoKeyboardProps) {
+  const start = Math.floor(Math.min(...rangeMidi) / 12) * 12;
   const whiteWidth = 20;
   const height = 90;
   const blackWidth = 12;
@@ -17,7 +19,7 @@ export default function PianoKeyboard({ midi }: PianoKeyboardProps) {
   const blacks: ReactNode[] = [];
   let whiteIndex = 0;
 
-  for (let pitch = start; pitch < start + 24; pitch += 1) {
+  for (let pitch = start; pitch < start + 12 * KEYBOARD_OCTAVES; pitch += 1) {
     const pitchClass = pitch % 12;
     if (!BLACK_PITCHES.has(pitchClass)) {
       const selected = midi.includes(pitch);

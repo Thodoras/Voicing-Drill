@@ -26,6 +26,7 @@ export const QUALITIES = [
   { id: 'm69', sym: 'm6/9', group: 'Minor', tones: ['b3', '5', '6', '9'] },
   { id: 'mmaj9', sym: 'm9(maj7)', group: 'Minor', tones: ['b3', '5', '7', '9'] },
   { id: 'dom13b9', sym: '13♭9', group: 'Dominant', tones: ['3', '13', 'b7', 'b9'] },
+  { id: 'dom13b9b13', sym: '7(♭9,♭13)', group: 'Dominant', tones: ['3', 'b13', 'b7', 'b9'] },
   { id: 'dom13', sym: '13', group: 'Dominant', tones: ['3', '13', 'b7', '9'] },
   { id: 'alt', sym: '7alt', group: 'Dominant', tones: ['3', 'b13', 'b7', 's9'] },
   { id: 'hd', sym: 'ø(♭9)', group: 'Half-dim', tones: ['b3', 'b5', 'b7', 'b9'] },
@@ -37,18 +38,39 @@ export const HANDS = ['Left hand', 'Right hand'] as const;
 export const ACCIDENTALS: Record<number, string> = { [-2]: '𝄫', [-1]: '♭', 0: '', 1: '♯', 2: '𝄪' };
 
 export const DEFAULT_PREFERENCES: Preferences = {
+  mode: 'single',
   q: QUALITIES.map((quality) => quality.id),
   inv: [0, 1, 2, 3],
   hand: [0, 1],
   kb: true,
+  progression: {
+    key: 0,
+    tonality: 'major',
+    dominantQuality: 'dom13',
+    tonicQuality: '9',
+    tempo: 90,
+    inversion: 0,
+    hand: 0,
+  },
 };
+
+export const KEY_OPTIONS = [
+  { pitchClass: 0, label: 'C' }, { pitchClass: 1, label: 'D♭' },
+  { pitchClass: 2, label: 'D' }, { pitchClass: 3, label: 'E♭' },
+  { pitchClass: 4, label: 'E' }, { pitchClass: 5, label: 'F' },
+  { pitchClass: 6, label: 'F♯' }, { pitchClass: 7, label: 'G' },
+  { pitchClass: 8, label: 'A♭' }, { pitchClass: 9, label: 'A' },
+  { pitchClass: 10, label: 'B♭' }, { pitchClass: 11, label: 'B' },
+] as const;
 
 export function defaultPreferences(): Preferences {
   return {
+    mode: DEFAULT_PREFERENCES.mode,
     q: [...DEFAULT_PREFERENCES.q],
     inv: [...DEFAULT_PREFERENCES.inv],
     hand: [...DEFAULT_PREFERENCES.hand],
     kb: DEFAULT_PREFERENCES.kb,
+    progression: { ...DEFAULT_PREFERENCES.progression },
   };
 }
 
@@ -103,8 +125,22 @@ export function createPrompt(preferences: Preferences, previous?: Prompt): Promp
     : Array.from({ length: quality.tones.length }, (_, index) => index);
   const inv = pick(inversions);
   const hand = pick(preferences.hand);
+  const prompt = createVoicing(rootPc, quality, inv, hand);
+  // Keep random drill voicings inside the C3–C5 keyboard (lowest note C3–B3).
+  const shift = 48 + ((((prompt.midi[0] - 48) % 12) + 12) % 12) - prompt.midi[0];
+  return { ...prompt, midi: prompt.midi.map((pitch) => pitch + shift) };
+}
+
+export function createVoicing(
+  rootPc: number,
+  quality: Quality,
+  inversion: number,
+  hand: Hand,
+  toneOrder?: readonly string[],
+): Prompt {
+  const inv = ((inversion % quality.tones.length) + quality.tones.length) % quality.tones.length;
   const spelling = rootSpelling(rootPc, quality);
-  const order = quality.tones.map((_, index) => quality.tones[(index + inv) % quality.tones.length]);
+  const order = toneOrder ?? quality.tones.map((_, index) => quality.tones[(index + inv) % quality.tones.length]);
   return {
     q: quality,
     rootPc,

@@ -9,11 +9,26 @@ export {
   DEFAULT_PREFERENCES,
   HANDS,
   INVERSIONS,
+  KEY_OPTIONS,
   QUALITIES,
   createPrompt,
   defaultPreferences,
 } from './model/music';
+export { createProgression } from './model/progression';
 export { loadPreferences, PREFERENCES_STORAGE_KEY, savePreferences } from './api/preferencesStorage';
 export type { PreferencesStorage } from './api/preferencesStorage';
 export { usePractice } from './hooks/usePractice';
-export type { ChordGroup, Hand, Preferences, Prompt, Quality, SpelledRoot } from './model/types';
+export type {
+  ChordGroup,
+  Hand,
+  Preferences,
+  PracticeMode,
+  ProgressionChord,
+  ProgressionDominantQuality,
+  ProgressionSettings,
+  ProgressionTonicQuality,
+  ProgressionTonality,
+  Prompt,
+  Quality,
+  SpelledRoot,
+} from './model/types';

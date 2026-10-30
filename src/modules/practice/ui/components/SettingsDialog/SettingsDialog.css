@@ -14,3 +14,11 @@
 .settings-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
 .settings-footer p { max-width: 230px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
 .done-button { min-height: 46px; border: 0; border-radius: 12px; padding: 0 21px; background: var(--brass); color: var(--brass-ink); cursor: pointer; font-weight: 600; }
+.setting-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.setting-control { min-width: 0; display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.setting-control select { min-width: 0; min-height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; background: var(--bg); color: var(--ink); font: 500 14px "IBM Plex Sans", sans-serif; }
+.setting-control output { float: right; color: var(--ink); font-family: "IBM Plex Mono", monospace; }
+.setting-control input[type="range"] { width: 100%; accent-color: var(--brass); }
+@media (max-width: 400px) {
+	.setting-grid { grid-template-columns: 1fr; }
+}

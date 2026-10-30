@@ -26,7 +26,15 @@ describe('practice model', () => {
     expect(prompt.root).toEqual({ letter: 'B', acc: -1 });
     expect(prompt.inv).toBe(2);
     expect(prompt.hand).toBe(1);
-    expect(prompt.midi).toEqual([68, 72, 73, 77]);
+    expect(prompt.midi).toEqual([56, 60, 61, 65]);
+  });
+
+  it('keeps random drill voicings between C3 and C5', () => {
+    for (let index = 0; index < 200; index += 1) {
+      const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['maj9', 'm9', 'dom13', 'alt'], inv: [0, 1, 2, 3], hand: [0, 1] });
+      expect(Math.min(...prompt.midi)).toBeGreaterThanOrEqual(48);
+      expect(Math.max(...prompt.midi)).toBeLessThan(72);
+    }
   });
 
   it('prefers A-flat over G-sharp for a minor chord root', () => {
@@ -63,6 +71,16 @@ describe('practice model', () => {
     expect(prompt.q.sym).toBe('13♭9');
     expect(prompt.q.tones).toEqual(['3', '13', 'b7', 'b9']);
     expect(prompt.midi).toEqual([52, 57, 58, 61]);
+  });
+
+  it('creates a dominant flat 9 flat 13 with the requested chord tones', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['dom13b9b13'], inv: [0], hand: [0] });
+
+    expect(prompt.q.sym).toBe('7(♭9,♭13)');
+    expect(prompt.q.tones).toEqual(['3', 'b13', 'b7', 'b9']);
+    expect(prompt.midi).toEqual([52, 56, 58, 61]);
   });
 
   it('creates a three-note half-diminished voicing with no third inversion', () => {

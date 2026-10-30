@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePractice } from '../../../../src/modules/practice';
 
 beforeEach(() => localStorage.clear());
+afterEach(() => vi.useRealTimers());
 
 describe('usePractice', () => {
   it('owns prompt progression and keyboard visibility', () => {
@@ -22,5 +23,18 @@ describe('usePractice', () => {
     act(() => result.current.setPreferences({ ...result.current.preferences, kb: false }));
 
     expect(JSON.parse(localStorage.getItem('voicing-drill-v1') || 'null')).toMatchObject({ kb: false });
+  });
+
+  it('stops after one ii–V–I pass', () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() => usePractice());
+
+    act(() => result.current.playProgression());
+    expect(result.current.isPlaying).toBe(true);
+
+    act(() => vi.advanceTimersByTime(9000));
+
+    expect(result.current.activeProgressionIndex).toBe(2);
+    expect(result.current.isPlaying).toBe(false);
   });
 });
