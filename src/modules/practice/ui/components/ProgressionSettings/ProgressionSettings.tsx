@@ -1,5 +1,5 @@
-import { HANDS, INVERSIONS, KEY_OPTIONS } from '../../../model/music';
-import type { Hand, Preferences, ProgressionSettings as ProgressionSettingsModel } from '../../../model/types';
+import { INVERSIONS, KEY_OPTIONS } from '../../../model/music';
+import type { Preferences, ProgressionSettings as ProgressionSettingsModel } from '../../../model/types';
 
 interface ProgressionSettingsProps {
   preferences: Preferences;
@@ -99,12 +99,6 @@ export default function ProgressionSettings({ preferences, onChange }: Progressi
             <span>Inversions</span>
             <select aria-label="Inversions" value={progression.inversion} onChange={(event) => update('inversion', Number(event.target.value))}>
               {inversionOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
-          </label>
-          <label className="setting-control">
-            <span>Hand</span>
-            <select value={progression.hand} onChange={(event) => update('hand', Number(event.target.value) as Hand)}>
-              {HANDS.map((hand, index) => <option key={hand} value={index}>{hand}</option>)}
             </select>
           </label>
         </div>

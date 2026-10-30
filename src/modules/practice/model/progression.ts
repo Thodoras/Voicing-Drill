@@ -62,7 +62,6 @@ function optimizeProgressionRegister(chords: ProgressionChord[]): ProgressionCho
 }
 
 export function createProgression(settings: ProgressionSettings): ProgressionChord[] {
-  const hand = settings.hand;
   const iiQuality = qualityById(settings.tonality === 'major' ? 'm9' : 'hd3');
   const dominant = qualityById(settings.dominantQuality);
   const tonicId = settings.tonality === 'major'
@@ -103,7 +102,7 @@ export function createProgression(settings: ProgressionSettings): ProgressionCho
       }
     }
 
-    const prompt = createVoicing(rootPc, quality, inversion, hand, toneOrder);
+    const prompt = createVoicing(rootPc, quality, inversion, 0, toneOrder);
     const tonicRoot = degree === 'I' ? keyRoot(rootPc) : undefined;
     return { degree, prompt: tonicRoot ? { ...prompt, root: tonicRoot } : prompt };
   });

@@ -12,7 +12,6 @@ export interface ProgressionSettings {
   tonicQuality: ProgressionTonicQuality;
   tempo: number;
   inversion: number;
-  hand: Hand;
 }
 
 export interface Quality {

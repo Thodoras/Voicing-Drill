@@ -54,7 +54,6 @@ describe('createProgression', () => {
         tonality: 'major',
         dominantQuality: 'dom13',
         inversion,
-        hand: 0,
       });
 
       expect(progression[1].prompt.inv).toBe(inversion);
@@ -87,7 +86,6 @@ describe('createProgression', () => {
       dominantQuality: 'dom13b9b13',
       tonicQuality: '9',
       inversion: 0,
-      hand: 0,
     });
 
     expect(progression.map(({ prompt }) => prompt.inv)).toEqual([0, 0, 0]);
@@ -105,7 +103,6 @@ describe('createProgression', () => {
       tonality: 'minor',
       dominantQuality: 'dom13b9b13',
       inversion: 2,
-      hand: 0,
     });
 
     expect(progression.map(({ prompt }) => prompt.inv)).toEqual([2, 2, 2]);
@@ -124,7 +121,6 @@ describe('createProgression', () => {
       dominantQuality: 'dom13b9b13',
       tonicQuality: '9',
       inversion: 2,
-      hand: 0,
     });
 
     expect(progression.map(({ prompt }) => prompt.root)).toEqual([
@@ -146,7 +142,6 @@ describe('createProgression', () => {
       tonality: 'minor',
       dominantQuality: 'dom13b9b13',
       inversion: 2,
-      hand: 0,
     });
 
     expect(progression.map(({ prompt }) => prompt.midi)).toEqual([
@@ -163,7 +158,6 @@ describe('createProgression', () => {
       tonality: 'minor',
       dominantQuality: 'dom13b9b13',
       inversion: 2,
-      hand: 0,
     });
 
     expect(progression.map(({ prompt }) => prompt.midi)).toEqual([
@@ -188,7 +182,6 @@ describe('createProgression', () => {
         dominantQuality: 'dom13b9b13',
         tonicQuality: '9',
         inversion: 2,
-        hand: 0,
       });
       const pitchClasses = progression.map(({ prompt }) => prompt.midi.map((midi) => midi % 12));
 

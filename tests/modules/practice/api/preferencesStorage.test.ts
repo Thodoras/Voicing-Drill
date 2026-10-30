@@ -44,7 +44,6 @@ describe('practice preference adapter', () => {
       dominantQuality: 'dom13b9',
       tempo: 112,
       inversion: 2,
-      hand: 1,
     };
     const storage = createStorage(JSON.stringify({ mode: 'progression', progression }));
 

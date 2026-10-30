@@ -50,7 +50,6 @@ export const DEFAULT_PREFERENCES: Preferences = {
     tonicQuality: '9',
     tempo: 90,
     inversion: 0,
-    hand: 0,
   },
 };
 

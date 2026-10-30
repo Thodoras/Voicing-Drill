@@ -54,7 +54,6 @@ export function loadPreferences(storage: PreferencesStorage | undefined = browse
             : savedProgression.inversion! >= 0 && savedProgression.inversion! < 4)
           ? savedProgression.inversion!
           : defaults.progression.inversion,
-        hand: savedProgression.hand === 1 ? 1 : 0,
       },
     };
   } catch {
