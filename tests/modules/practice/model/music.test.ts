@@ -65,12 +65,40 @@ describe('practice model', () => {
     expect(prompt.midi).toEqual([52, 57, 58, 61]);
   });
 
-  it('generates four ascending notes for every supported quality', () => {
+  it('creates a three-note half-diminished voicing with no third inversion', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    for (const inversion of [0, 1, 2]) {
+      const prompt = createPrompt({
+        ...DEFAULT_PREFERENCES,
+        q: ['hd3'],
+        inv: [inversion],
+        hand: [0],
+      });
+
+      expect(prompt.q.sym).toBe('ø7');
+      expect(prompt.q.tones).toEqual(['b3', 'b5', 'b7']);
+      expect(prompt.inv).toBe(inversion);
+      expect(prompt.midi).toHaveLength(3);
+      expect(prompt.midi).toEqual([...prompt.midi].sort((left, right) => left - right));
+    }
+  });
+
+  it('falls back to a valid inversion when only third inversion is selected for a three-note chord', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: ['hd3'], inv: [3], hand: [0] });
+
+    expect(prompt.inv).toBe(0);
+    expect(prompt.midi).toHaveLength(3);
+  });
+
+  it('generates the declared number of ascending notes for every supported quality', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
 
     for (const quality of QUALITIES) {
       const prompt = createPrompt({ ...DEFAULT_PREFERENCES, q: [quality.id], inv: [0], hand: [0] });
-      expect(prompt.midi).toHaveLength(4);
+      expect(prompt.midi).toHaveLength(quality.tones.length);
       expect(prompt.midi).toEqual([...prompt.midi].sort((left, right) => left - right));
     }
   });

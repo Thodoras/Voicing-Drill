@@ -1,6 +1,6 @@
 # Voicing Drill
 
-A touch-friendly piano practice app for four-note, rootless voicings. It generates chord prompts, highlights the pitches on a two-octave keyboard, and plays the voicing in the browser.
+A touch-friendly piano practice app for rootless piano voicings. It generates three- and four-note chord prompts, highlights the pitches on a two-octave keyboard, and plays the voicing in the browser.
 
 ## Requirements
 

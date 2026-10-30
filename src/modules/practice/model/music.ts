@@ -29,6 +29,7 @@ export const QUALITIES = [
   { id: 'dom13', sym: '13', group: 'Dominant', tones: ['3', '13', 'b7', '9'] },
   { id: 'alt', sym: '7alt', group: 'Dominant', tones: ['3', 'b13', 'b7', 's9'] },
   { id: 'hd', sym: 'ø(♭9)', group: 'Half-dim', tones: ['b3', 'b5', 'b7', 'b9'] },
+  { id: 'hd3', sym: 'ø7', group: 'Half-dim', tones: ['b3', 'b5', 'b7'] },
 ] as const satisfies readonly Quality[];
 
 export const INVERSIONS = ['Root position', '1st inversion', '2nd inversion', '3rd inversion'] as const;
@@ -76,10 +77,14 @@ function pick<T>(items: readonly T[]): T {
 }
 
 export function createPrompt(preferences: Preferences, previous?: Prompt): Prompt {
-  const qualities = QUALITIES.filter((quality) => preferences.q.includes(quality.id));
-  if (!qualities.length || !preferences.inv.length || !preferences.hand.length) {
+  const selectedQualities = QUALITIES.filter((quality) => preferences.q.includes(quality.id));
+  if (!selectedQualities.length || !preferences.inv.length || !preferences.hand.length) {
     throw new Error('Choose at least one chord quality, inversion, and hand.');
   }
+  const qualitiesWithSelectedInversions = selectedQualities.filter((quality) =>
+    preferences.inv.some((inversion) => Number.isInteger(inversion) && inversion >= 0 && inversion < quality.tones.length),
+  );
+  const qualities = qualitiesWithSelectedInversions.length ? qualitiesWithSelectedInversions : selectedQualities;
 
   let quality = pick(qualities);
   let rootPc = Math.floor(Math.random() * 12);
@@ -90,10 +95,16 @@ export function createPrompt(preferences: Preferences, previous?: Prompt): Promp
     attempts += 1;
   }
 
-  const inv = pick(preferences.inv);
+  const availableInversions = preferences.inv.filter(
+    (inversion) => Number.isInteger(inversion) && inversion >= 0 && inversion < quality.tones.length,
+  );
+  const inversions = availableInversions.length
+    ? availableInversions
+    : Array.from({ length: quality.tones.length }, (_, index) => index);
+  const inv = pick(inversions);
   const hand = pick(preferences.hand);
   const spelling = rootSpelling(rootPc, quality);
-  const order = quality.tones.map((_, index) => quality.tones[(index + inv) % 4]);
+  const order = quality.tones.map((_, index) => quality.tones[(index + inv) % quality.tones.length]);
   return {
     q: quality,
     rootPc,
