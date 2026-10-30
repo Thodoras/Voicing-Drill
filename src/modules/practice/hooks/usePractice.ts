@@ -159,7 +159,7 @@ export function usePractice() {
         if (preferences.mode === 'single') nextPrompt();
         else if (isPlaying) stopProgression();
         else playProgression();
-      } else if (event.key.toLowerCase() === 'k') {
+      } else if (event.key.toLowerCase() === 'k' && preferences.mode === 'single') {
         setPreferences((previous) => ({ ...previous, kb: !previous.kb }));
       } else if (event.key.toLowerCase() === 'p') {
         if (preferences.mode === 'single') playMidi(audioContext, activeAudioNodes, prompt.midi);

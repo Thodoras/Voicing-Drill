@@ -35,7 +35,7 @@ export function PracticeScreen() {
         className="keyboard-panel"
         id="voicing-keyboard"
         aria-label="Voicing keyboard"
-        hidden={!practice.preferences.kb}
+        hidden={practice.preferences.mode === 'single' && !practice.preferences.kb}
       >
         <PianoKeyboard
           midi={practice.preferences.mode === 'single'
@@ -54,9 +54,7 @@ export function PracticeScreen() {
           />
         ) : (
           <ProgressionActions
-            keyboardVisible={practice.preferences.kb}
             isPlaying={practice.isPlaying}
-            onToggleKeyboard={practice.toggleKeyboard}
             onPlay={practice.playProgression}
             onStop={practice.stopProgression}
           />

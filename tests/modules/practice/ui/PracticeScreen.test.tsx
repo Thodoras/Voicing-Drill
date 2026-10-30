@@ -42,6 +42,16 @@ describe('PracticeScreen', () => {
       .map((option) => option.value)).toEqual(['0', '1', '2', '3']);
   });
 
+  it('always shows the piano in progression mode', async () => {
+    const user = userEvent.setup();
+    render(<PracticeScreen />);
+    await user.click(screen.getByRole('button', { name: 'Hide piano' }));
+    await user.click(screen.getByRole('button', { name: 'ii–V–I progression' }));
+
+    expect(screen.queryByRole('button', { name: /piano/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Voicing keyboard' })).toBeVisible();
+  });
+
   it('selects a progression chord when it is tapped', async () => {
     const user = userEvent.setup();
     render(<PracticeScreen />);
