@@ -21,6 +21,9 @@ function playMidi(
     const browserWindow = window as Window & { webkitAudioContext?: typeof AudioContext };
     const AudioContextConstructor = window.AudioContext || browserWindow.webkitAudioContext;
     if (!AudioContextConstructor) return;
+    // Safari 17+: play through the iPhone silent switch like a media app.
+    const audioSession = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+    if (audioSession) audioSession.type = 'playback';
     contextRef.current ??= new AudioContextConstructor();
     const context = contextRef.current;
     if (context.state === 'suspended') void context.resume();
