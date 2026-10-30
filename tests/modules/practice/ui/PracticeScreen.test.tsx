@@ -6,12 +6,13 @@ import { PracticeScreen } from '../../../../src/modules/practice';
 beforeEach(() => localStorage.clear());
 
 describe('PracticeScreen', () => {
-  it('advances to the next prompt', async () => {
+  it('advances to the next prompt without showing a chord counter', async () => {
     const user = userEvent.setup();
     render(<PracticeScreen />);
 
     await user.click(screen.getByRole('button', { name: /tap for the next chord/i }));
-    expect(screen.getByText('Chord 1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /tap for the next chord/i })).toBeInTheDocument();
+    expect(screen.queryByText(/^Chord \d+$/)).not.toBeInTheDocument();
   });
 
   it('shows and hides the piano from the practice actions', async () => {

@@ -13,8 +13,9 @@ describe('usePractice', () => {
     act(() => result.current.toggleKeyboard());
     expect(result.current.preferences.kb).toBe(false);
 
+    const firstPrompt = result.current.prompt;
     act(() => result.current.nextPrompt());
-    expect(result.current.count).toBe(1);
+    expect(result.current.prompt).not.toBe(firstPrompt);
   });
 
   it('persists preference changes through the storage adapter', () => {

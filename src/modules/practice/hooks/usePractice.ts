@@ -51,7 +51,6 @@ function playMidi(
 export function usePractice() {
   const [preferences, setPreferences] = useState<Preferences>(() => loadPreferences());
   const [prompt, setPrompt] = useState<Prompt>(() => createPrompt(preferences));
-  const [count, setCount] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeProgressionIndex, setActiveProgressionIndex] = useState(0);
@@ -84,7 +83,6 @@ export function usePractice() {
   function nextPrompt() {
     stopProgression();
     setPrompt((previous) => createPrompt(preferences, previous));
-    setCount((previous) => previous + 1);
   }
 
   function closeSettings() {
@@ -96,7 +94,6 @@ export function usePractice() {
       || !preferences.hand.includes(prompt.hand)
     ) {
       setPrompt((previous) => createPrompt(preferences, previous));
-      setCount((previous) => previous + 1);
     }
   }
 
@@ -178,7 +175,6 @@ export function usePractice() {
   const progression = createProgression(preferences.progression);
 
   return {
-    count,
     prompt,
     progression,
     preferences,

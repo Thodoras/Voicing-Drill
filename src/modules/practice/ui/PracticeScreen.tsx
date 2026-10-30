@@ -15,7 +15,7 @@ export function PracticeScreen() {
 
   return (
     <main className="app-shell">
-      <PracticeHeader count={practice.count} onOpenSettings={practice.openSettings} />
+      <PracticeHeader onOpenSettings={practice.openSettings} />
       <PracticeModeSwitch mode={practice.preferences.mode} onChange={practice.changeMode} />
 
       {practice.preferences.mode === 'single' ? (
